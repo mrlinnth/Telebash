@@ -25,7 +25,7 @@ TG_TOKEN="${TELEBASH_TOKEN:-}"
 
 checkEnv(){
 
-	REQUIREMENTS=( 'curl' )
+	REQUIREMENTS=( 'curl' 'jq' )
 
 	for REQUIREMENT in "${REQUIREMENTS[@]}"; do
 
@@ -144,16 +144,21 @@ getUpdate(){
 
 passFavID(){
 
-	if [[ ! ${CHAT_ID} ]]; then
+	if [[ ${CHAT_ID} ]]; then
+		return 0
+	fi
 
-		## Chat ID list in favorites must be <chat-id>@<alias>
-		CHAT_ID=$( cut -d '@' -f 1 < "${FAV_FILE}" | head -n1)
+	if [[ ! -f ${FAV_FILE} ]]; then
+		echo -e "${RED}Enter a chat ID or create ${FAV_FILE} with a favorite entry.${RC}"
+		exit 1
+	fi
 
-		if [[ -z "${CHAT_ID}" ]]; then
-			echo -e "${RED}Enter a chat ID! (No favorites found!)${RC}"
-			exit 1
-		fi
+	## Chat ID list in favorites must be <chat-id>@<alias>
+	CHAT_ID=$( cut -d '@' -f 1 < "${FAV_FILE}" | head -n1)
 
+	if [[ -z "${CHAT_ID}" ]]; then
+		echo -e "${RED}Enter a chat ID! (No favorites found!)${RC}"
+		exit 1
 	fi
 
 }
@@ -201,11 +206,18 @@ err(){
 
 send(){
 
-	OUT=$(sendInput)
+	OUT=$(sendInput 2>&1)
+	STATUS=$?
+	if [[ ${STATUS} -ne 0 ]]; then
+		echo -e "${OUT}"
+		return ${STATUS}
+	fi
+
 	if [[ $OPTION == '-t' || $OPTION == '-d' ]]; then
-		SENT=$(echo $OUT | jq -r '.ok')
-		if [[ -z $OUT || -z $SENT ]]; then
-			echo "${RED}Something went wrong!$RC"
+		SENT=$(jq -r '.ok' <<< "${OUT}" 2>/dev/null)
+		if [[ -z ${OUT} || ${SENT} != "true" ]]; then
+			echo -e "${RED}Something went wrong!${RC}"
+			return 1
 		fi
 	else
 		echo "$OUT"
@@ -216,13 +228,9 @@ send(){
 checkOutput() {
 
 	if [[ $OPTION == '-t' || $OPTION == '-d' || $OPTION == '-u' ]]; then
-		if ! send; then
-			err
-		fi
+		send
 	else
-		if ! send; then
-			err
-		fi
+		send
 	fi
 
 }
