@@ -7,8 +7,9 @@ Telebash is a Bash script that allows you to send messages using Telegram. It pr
 1. Clone the Telebash repository from GitHub: [Telebash GitHub Repo](https://github.com/L3SP1NK/Telebash)
 2. Make the script executable: `chmod +x telebash`
 3. Obtain a Telegram Bot Token from [@botfather](https://t.me/botfather) on Telegram.
-4. Create a file named `telebash_token.txt` in the `~/.config/telebash/` directory.
-5. Paste your Telegram Bot Token into the `telebash_token.txt` file and save it.
+4. Export the token as an environment variable:
+   `export TELEBASH_TOKEN="123456:ABC-DEF..."`.
+5. Run Telebash from the same shell session, or add the export to your shell profile.
 
 ## Usage
 

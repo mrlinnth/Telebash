@@ -19,9 +19,8 @@ CHAT_ID="${3}"
 
 
 TG_API_URL='https://api.telegram.org/bot'
-TG_TOKEN_FILE="${HOME}/.config/telebash/telebash_token.txt"
-TG_TOKEN=$( head -n 1 < "${TG_TOKEN_FILE}" )
 FAV_FILE="${HOME}/.config/telebash/favorites.txt"
+TG_TOKEN="${TELEBASH_TOKEN:-}"
 
 
 checkEnv(){
@@ -39,9 +38,9 @@ checkEnv(){
 
 	done
 
-	if [[ ! -f ${TG_TOKEN_FILE} || ! ${TG_TOKEN} ]]; then
+	if [[ -z ${TG_TOKEN} ]]; then
 
-		echo -e "\n ${RED}Token is missing!\n ${RC}\n Get one with ${CYAN}@botfather${RC} on Telegram.\n"
+		echo -e "\n ${RED}Token is missing!\n ${RC}\n Export ${CYAN}TELEBASH_TOKEN${RC} with your Telegram bot token.\n"
 		exit 1
 
 	fi
