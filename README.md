@@ -11,6 +11,13 @@ Telebash is a Bash script that allows you to send messages using Telegram. It pr
    `export TELEBASH_TOKEN="123456:ABC-DEF..."`.
 5. Run Telebash from the same shell session, or add the export to your shell profile.
 
+Example:
+
+```bash
+export TELEBASH_TOKEN="123456:ABC-DEF..."
+./telebash --help
+```
+
 ## Usage
 
 To use Telebash, run the script with the following command:
